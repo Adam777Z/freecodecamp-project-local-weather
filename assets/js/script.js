@@ -1,30 +1,44 @@
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', (event) => {
 	var unit = 'C';
 
 	if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(function(position) {
-			$.getJSON('https://fcc-weather-api.glitch.me/api/current?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude, function(data) {
-				$('#location').html(data.name + ', ' + data.sys.country);
-				$("#temperature").html(Math.round(parseInt(data.main.temp, 10))).after(' °');
-				$("#unit").html(unit);
-				$('#description').html('<img src="' + data.weather[0].icon + '">' + data.weather[0].main);
+			fetch('https://fcc-weather-api.glitch.me/api/current?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude, {
+				'method': 'GET'
+			})
+			.then((response) => {
+				if (response['ok']) {
+					return response.json();
+				} else {
+					throw 'Error';
+				}
+			})
+			.then((data) => {
+				document.querySelector('#location').textContent = data.name + ', ' + data.sys.country;
+				document.querySelector('#temperature').textContent = Math.round(parseInt(data.main.temp, 10));
+				document.querySelector('#temperature').insertAdjacentText('afterend', ' °');
+				document.querySelector('#unit').textContent = unit;
+				document.querySelector('#description').innerHTML = '<img src="' + data.weather[0].icon + '">' + data.weather[0].main;
+			})
+			.catch((error) => {
+				console.log(error);
 			});
 		});
 	}
 
-	$('#unit').click(function(e) {
-		e.preventDefault();
+	document.querySelector('#unit').addEventListener('click', (event2) => {
+		event2.preventDefault();
 
-		var temperature = $('#temperature').text();
+		let temperature = document.querySelector('#temperature').textContent;
 
 		if (unit == 'C') {
 			unit = 'F';
-			$('#temperature').html(Math.round(parseInt(temperature, 10) * (9 / 5) + 32));
-			$('#unit').html(unit);
+			document.querySelector('#temperature').textContent = Math.round(parseInt(temperature, 10) * (9 / 5) + 32);
+			document.querySelector('#unit').textContent = unit;
 		} else if (unit == 'F') {
 			unit = 'C';
-			$('#temperature').html(Math.round((parseInt(temperature, 10) - 32) * (5 / 9)));
-			$('#unit').html(unit);
+			document.querySelector('#temperature').textContent = Math.round((parseInt(temperature, 10) - 32) * (5 / 9));
+			document.querySelector('#unit').textContent = unit;
 		}
 	});
 });
