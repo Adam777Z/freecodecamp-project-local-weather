@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 	if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(function(position) {
-			fetch('https://fcc-weather-api.glitch.me/api/current?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude, {
+			fetch('https://weather-proxy.freecodecamp.rocks/api/current?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude, {
 				'method': 'GET'
 			})
 			.then((response) => {
